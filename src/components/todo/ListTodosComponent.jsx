@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TodoDataService from "../../api/todo/TodoDataService.js";
 import AuthenticationService from "./AuthenticationService.js";
+import moment from "moment";
 
 class ListTodosComponent extends Component {
   constructor(props) {
@@ -11,6 +12,8 @@ class ListTodosComponent extends Component {
       message: null
     };
     this.deleteTodoClicked = this.deleteTodoClicked.bind(this);
+    this.updateTodoClicked = this.updateTodoClicked.bind(this);
+    this.addTodoClicked = this.addTodoClicked.bind(this);
     this.refreshTodos = this.refreshTodos.bind(this);
   }
 
@@ -48,6 +51,25 @@ class ListTodosComponent extends Component {
     });
   }
 
+  addTodoClicked() {
+    this.props.history.push(`/todos/-1`);
+  }
+
+  updateTodoClicked(id) {
+    console.log("update " + id);
+    this.props.history.push(`/todos/${id}`);
+    // /todos/${id}
+    // let username = AuthenticationService.getLoggedInUserName()
+    // //console.log(id + " " + username);
+    // TodoDataService.deleteTodo(username, id)
+    //  .then (
+    //      response => {
+    //         this.setState({message : `Delete of todo ${id} Successful`})
+    //         this.refreshTodos()
+    //      }
+    //  )
+  }
+
   render() {
     console.log("render");
     return (
@@ -63,6 +85,7 @@ class ListTodosComponent extends Component {
                 <th>Description</th>
                 <th>Target Date</th>
                 <th>IsCompleted?</th>
+                <th>Update</th>
                 <th>Delete</th>
               </tr>
             </thead>
@@ -71,7 +94,15 @@ class ListTodosComponent extends Component {
                 <tr key={todo.id}>
                   <td>{todo.description}</td>
                   <td>{todo.done.toString()}</td>
-                  <td>{todo.targetDate.toString()}</td>
+                  <td>{moment(todo.targetDate).format("YYYY-MM-DD")}</td>
+                  <td>
+                    <button
+                      className="btn btn-success"
+                      onClick={() => this.updateTodoClicked(todo.id)}
+                    >
+                      Update
+                    </button>
+                  </td>
                   <td>
                     <button
                       className="btn btn-warning"
@@ -84,6 +115,11 @@ class ListTodosComponent extends Component {
               ))}
             </tbody>
           </table>
+          <div className="row">
+            <button className="btn btn-success" onClick={this.addTodoClicked}>
+              Add
+            </button>
+          </div>
         </div>
       </div>
     );
