@@ -3,6 +3,7 @@ import TodoDataService from "../../api/todo/TodoDataService.js";
 import AuthenticationService from "./AuthenticationService.js";
 import moment from "moment";
 
+
 class ListTodosComponent extends Component {
   constructor(props) {
     console.log("constructor");
@@ -37,14 +38,12 @@ class ListTodosComponent extends Component {
   refreshTodos() {
     let username = AuthenticationService.getLoggedInUserName();
     TodoDataService.retrieveAllTodos(username).then(response => {
-      //console.log(response);
       this.setState({ todos: response.data });
     });
   }
 
   deleteTodoClicked(id) {
     let username = AuthenticationService.getLoggedInUserName();
-    //console.log(id + " " + username);
     TodoDataService.deleteTodo(username, id).then(response => {
       this.setState({ message: `Delete of todo ${id} Successful` });
       this.refreshTodos();
@@ -58,16 +57,6 @@ class ListTodosComponent extends Component {
   updateTodoClicked(id) {
     console.log("update " + id);
     this.props.history.push(`/todos/${id}`);
-    // /todos/${id}
-    // let username = AuthenticationService.getLoggedInUserName()
-    // //console.log(id + " " + username);
-    // TodoDataService.deleteTodo(username, id)
-    //  .then (
-    //      response => {
-    //         this.setState({message : `Delete of todo ${id} Successful`})
-    //         this.refreshTodos()
-    //      }
-    //  )
   }
 
   render() {
@@ -93,8 +82,12 @@ class ListTodosComponent extends Component {
               {this.state.todos.map(todo => (
                 <tr key={todo.id}>
                   <td>{todo.description}</td>
+                  <td>
+                    {moment(todo.targetDate)
+                      .utcOffset("+0100")
+                      .format("MMM-DD-YYYY")}
+                  </td>
                   <td>{todo.done.toString()}</td>
-                  <td>{moment(todo.targetDate).format("YYYY-MM-DD")}</td>
                   <td>
                     <button
                       className="btn btn-success"
